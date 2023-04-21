@@ -49,7 +49,7 @@ class BaseStickDataset(Dataset, abc.ABC):
         self.depth_pth = self.traj_path / "depths"
         self.conf_pth = self.traj_path / "confs"
         self.labels_pth = self.traj_path / "labels.json"
-        #TODO: change the followibg line to the correct path
+        # TODO: change the followibg line to the correct path
         self.detection_pth = self.traj_path / "detections"
 
         self.labels = json.load(self.labels_pth.open("r"))
@@ -97,6 +97,22 @@ class StickDataset(BaseStickDataset, abc.ABC):
 
     def set_act_metrics(self, act_metrics):
         self.act_metrics = act_metrics
+
+    def get_cost_from_clip(self, clip_embeddings):
+        # clip_embeddings: (L, 512)
+        # self.clip_embeddings: (M, N, 512)
+        # M: length of the current trajectory, N: Number of objects detected in the given frame
+        # L: number of words in the given query
+
+        total_cost = 0
+        for frame_embeddings in self.clip_embeddings:
+            # calculate N x L cost matrix
+            cost_matrix = torch.cdist(frame_embeddings, clip_embeddings, p=2)
+            # use hungarian algorithm to find the best match
+            row_ind, col_ind = linear_sum_assignment(cost_matrix)
+            # add the cost of the best match
+            total_cost += cost_matrix[row_ind, col_ind].sum()
+        return total_cost / len(self.clip_embeddings)
 
     def reformat_labels(self, labels):
         # reformat labels to be delta xyz, delta rpy, next gripper state
@@ -156,11 +172,10 @@ class StickDataset(BaseStickDataset, abc.ABC):
                 "std"
             ].numpy()
         return labels
-    
-    def load_detection_labels(self):
-        #TODO: load detection labels with the help from Irmak
-        raise NotImplementedError
 
+    def load_detection_labels(self):
+        # TODO: load detection labels with the help from Irmak
+        raise NotImplementedError
 
     def get_img_pths(self, idx):
         # get image paths with window size of traj_len, starting from idx and moving window by traj_skip
@@ -207,22 +222,6 @@ class ImageStickDataset(StickDataset):
         if self.pre_load:
             self.imgs = self.load_imgs()
 
-    def get_cost_from_clip(self, clip_embeddings):
-        #clip_embeddings: (L, 512)
-        #self.clip_embeddings: (M, N, 512)
-        # M: length of the current trajectory, N: Number of objects detected in the given frame
-        # L: number of words in the given query
-        
-        total_cost = 0
-        for frame_embeddings in self.clip_embeddings:
-            #calculate N x L cost matrix
-            cost_matrix = torch.cdist(frame_embeddings, clip_embeddings, p=2)
-            #use hungarian algorithm to find the best match
-            row_ind, col_ind = linear_sum_assignment(cost_matrix)
-            #add the cost of the best match
-            total_cost += cost_matrix[row_ind, col_ind].sum()
-        return total_cost/len(self.clip_embeddings)
-                
     def load_imgs(self):
         # load images in uint8 with window size of traj_len, starting from idx and moving window by traj_skip
         imgs = []
@@ -236,7 +235,6 @@ class ImageStickDataset(StickDataset):
         return imgs
 
     def __getitem__(self, idx):
-
         _, labels = super().__getitem__(idx)
 
         if self.pre_load:
@@ -281,7 +279,6 @@ class DepthStickDataset(ImageStickDataset):
         pre_load=False,
         transforms=None,
     ):
-
         if self.pre_load:
             self.drop_nan()
         super().__init__(
@@ -558,7 +555,6 @@ def get_image_stick_dataset(
         val_dataset = None
 
     if len(test_traj_paths) > 0:
-
         test_dataset = ConcatDataset(
             [
                 ImageStickDataset(
