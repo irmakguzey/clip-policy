@@ -48,6 +48,7 @@ class Preprocessor:
             env_path, # Main directory
             score_thresh_test,
             classes,
+            visualize = True,
             cfg_merge_path = '/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml',
             model_weights_path = 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth',
             zeroshot_weight_path = 'rand',
@@ -69,8 +70,8 @@ class Preprocessor:
 
         # Get the major classifier
         vocabulary = 'custom' # change to 'lvis', 'objects365', 'openimages', or 'coco'
-        metadata = MetadataCatalog.get('__unused')
-        metadata.thing_classes = classes
+        self.metadata = MetadataCatalog.get('__unused')
+        self.metadata.thing_classes = classes
         all_vocab_classifier = self.text_embeddings.get(classes)
         num_classes = len(classes)
         reset_cls_test(self.predictor.model, all_vocab_classifier, num_classes)
@@ -78,7 +79,11 @@ class Preprocessor:
 
         # Create the dump directory
         self.env_path = env_path 
-        self.roots = glob.glob(os.path.join(env_path,'*'))
+        self.roots = sorted(glob.glob(os.path.join(env_path,'*')))
+        if visualize: # If visualize create the directory to dump images
+            for root in self.roots:
+                os.makedirs(os.path.join(root, 'detected_images'), exist_ok=True)
+        self.visualize = visualize
 
     def _get_image(self, path):
         return cv2.imread(path)
@@ -93,6 +98,10 @@ class Preprocessor:
     def process_image(self, path):
         img = self._get_image(path)
         outputs = self.predictor(img) 
+
+        # Visualize if wanted
+        if self.visualize:
+            self.visualize_detection(img, outputs, path)
         
         # Get the text embeddings for each class that is predicted
         fields = outputs['instances'].get_fields()
@@ -121,7 +130,7 @@ class Preprocessor:
             pbar = tqdm(total=len(image_paths))
             
             for image_path in image_paths:
-                print(f'image_path: {image_path}')
+                # print(f'image_path: {image_path}')
                 image_label = self.process_image(image_path)
                 root_labels[image_path] = image_label 
 
@@ -131,3 +140,19 @@ class Preprocessor:
             # Dump this as a json file to the root
             with open(os.path.join(root, 'detections.pkl'), "wb") as outfile:
                 pickle.dump(root_labels, outfile)
+
+
+    def visualize_detection(self, img, outputs, img_path):
+        v = Visualizer(img[:, :, ::-1], self.metadata)
+        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+        
+        # Set the dump img path
+        dump_img_path_list = img_path.split('/')
+        dump_img_path_list[-2] = 'detected_images'
+        dump_img_path = '/'.join(dump_img_path_list)
+
+
+        # Dump the new detected image
+        cv2.imwrite(dump_img_path, out.get_image()[:,:,::-1])
+
+
