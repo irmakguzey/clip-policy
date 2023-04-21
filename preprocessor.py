@@ -16,9 +16,11 @@ import sys
 import numpy as np
 import os, json, cv2, random
 import matplotlib.pyplot as plt
+import pickle
 import torch
 import torchvision.transforms as T 
 
+from tqdm import tqdm 
 from torchvision.datasets.folder import default_loader as loader 
 from torch.utils import data
 
@@ -48,7 +50,7 @@ class Preprocessor:
             score_thresh_test = 0.5,
             zeroshot_weight_path = 'rand',
             one_class_per_proposal = True,
-            classes = ['headphone', 'webcam', 'paper', 'coffee']
+            classes = ['cabinet', 'drawer', 'gripper']
     ):
 
         cfg = get_cfg()
@@ -78,8 +80,8 @@ class Preprocessor:
         self.image_transform = T.Compose([
             T.Resize((480,480)),
             # T.Lambda(self._crop_transform), - TODO ask and then do this!
-            # T.ToTensor(),
-            # T.Normalize(VISION_IMAGE_MEANS, VISION_IMAGE_STDS),
+            T.ToTensor(),
+            T.Normalize(VISION_IMAGE_MEANS, VISION_IMAGE_STDS),
         ])
 
         # Create the dump directory
@@ -87,6 +89,9 @@ class Preprocessor:
         self.roots = glob.glob(os.path.join(env_path,'*'))
 
 
+    # def _crop_transform(self, image):
+    #     # Vision transforms used
+    #     return crop(image, 0,0,480,480)
 
     def _get_clip_embeddings(self, vocabulary, prompt='a '):
         texts = [prompt + x for x in vocabulary]
@@ -94,8 +99,7 @@ class Preprocessor:
         return emb
     
     def _get_image(self, path):
-        img = self.image_transform(loader(path))
-        return torch.FloatTensor(img)
+        return cv2.imread(path)
     
     def _get_class_names(self, pred_class_idx):
         class_names = []
@@ -106,8 +110,10 @@ class Preprocessor:
 
     def process_image(self, path):
         img = self._get_image(path)
+        # plt.imshow(img)
+        # print(img.shape)
         outputs = self.predictor(img) 
-
+        
         # Get the text embeddings for each class that is predicted
         fields = outputs['instances'].get_fields()
         pred_class_idx = fields['pred_classes']
@@ -118,8 +124,8 @@ class Preprocessor:
 
         label = dict(
             pred_classes = pred_classes,
-            clip_embeddings = text_embeddings, 
-            scores = scores
+            clip_embeddings = text_embeddings.numpy(), 
+            scores = scores.detach().cpu().numpy()
         )
 
         return label
@@ -127,19 +133,25 @@ class Preprocessor:
     def process_env(self): # Path of the root
 
         for root in self.roots:
-            image_paths = glob.glob(os.path.join(root, 'images/*'))
+            image_paths = sorted(glob.glob(os.path.join(root, 'images/*')))
 
             # Create the labels directory 
             # os.makedirs(os.path.join(root, 'labels'), exist_ok=True) 
             # We will create one big labels file
             root_labels = dict() # Dump this as a json file
+            pbar = tqdm(total=len(image_paths))
+            
             for image_path in image_paths:
+                print(f'image_path: {image_path}')
                 image_label = self.process_image(image_path)
                 root_labels[image_path] = image_label 
 
+                pbar.update(1)
+                pbar.set_description(f'Processed Image: {image_path}')
+
             # Dump this as a json file to the root
-            with open(os.path.join(root, 'labels.json'), "w") as outfile:
-                json.dump(root_labels, outfile)
+            with open(os.path.join(root, 'labels.pkl'), "wb") as outfile:
+                pickle.dump(root_labels, outfile)
 
 if __name__ == '__main__':
     env_path = '/home/irmak/Workspace/clip-policy/data'
@@ -147,6 +159,8 @@ if __name__ == '__main__':
         env_path = env_path
     )
     print(f'preprocessor.root: {preprocessor.roots}')
+
+    preprocessor.process_env()
 
 
 
