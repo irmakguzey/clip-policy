@@ -2,7 +2,7 @@ import glob
 import hydra 
 from omegaconf import DictConfig
 
-from clip_policy.clip_preprocess import Preprocessor
+from clip_policy.clip import Preprocessor
 
 @hydra.main(version_base=None, config_path='clip_policy/configs', config_name='preprocess')
 def main(cfg : DictConfig) -> None:

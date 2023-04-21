@@ -40,6 +40,7 @@ from detic.modeling.text.text_encoder import build_text_encoder
 from detic.modeling.utils import reset_cls_test
 
 from clip_policy.utils import *
+from .embeddings import TextEmbeddings
 
 class Preprocessor:
     def __init__(
@@ -64,41 +65,21 @@ class Preprocessor:
         self.predictor = DefaultPredictor(cfg)
 
         # Build the text encoder - used in getting the clip embeddings
-        self.text_encoder = build_text_encoder(pretrain=True)
-        self.text_encoder.eval()
+        self.text_embeddings = TextEmbeddings()
 
         # Get the major classifier
         vocabulary = 'custom' # change to 'lvis', 'objects365', 'openimages', or 'coco'
         metadata = MetadataCatalog.get('__unused')
         metadata.thing_classes = classes
-        all_vocab_classifier = self._get_clip_embeddings(classes)
+        all_vocab_classifier = self.text_embeddings.get(classes)
         num_classes = len(classes)
         reset_cls_test(self.predictor.model, all_vocab_classifier, num_classes)
         self.classes = classes
-        print(f'self.classes: {self.classes}')
-
-        # Set the image transform
-        self.image_transform = T.Compose([
-            T.Resize((480,480)),
-            # T.Lambda(self._crop_transform), - TODO ask and then do this!
-            T.ToTensor(),
-            T.Normalize(VISION_IMAGE_MEANS, VISION_IMAGE_STDS),
-        ])
 
         # Create the dump directory
         self.env_path = env_path 
         self.roots = glob.glob(os.path.join(env_path,'*'))
 
-
-    # def _crop_transform(self, image):
-    #     # Vision transforms used
-    #     return crop(image, 0,0,480,480)
-
-    def _get_clip_embeddings(self, vocabulary, prompt='a '):
-        texts = [prompt + x for x in vocabulary]
-        emb = self.text_encoder(texts).detach().permute(1, 0).contiguous().cpu()
-        return emb
-    
     def _get_image(self, path):
         return cv2.imread(path)
     
@@ -111,8 +92,6 @@ class Preprocessor:
 
     def process_image(self, path):
         img = self._get_image(path)
-        # plt.imshow(img)
-        # print(img.shape)
         outputs = self.predictor(img) 
         
         # Get the text embeddings for each class that is predicted
@@ -120,7 +99,7 @@ class Preprocessor:
         pred_class_idx = fields['pred_classes']
         pred_classes = self._get_class_names(pred_class_idx) # Names of the predicted classes
 
-        text_embeddings = self._get_clip_embeddings(pred_classes)
+        text_embeddings = self.text_embeddings.get(pred_classes)
         scores = fields['scores']
 
         label = dict(
@@ -137,7 +116,6 @@ class Preprocessor:
             image_paths = sorted(glob.glob(os.path.join(root, 'images/*')))
 
             # Create the labels directory 
-            # os.makedirs(os.path.join(root, 'labels'), exist_ok=True) 
             # We will create one big labels file
             root_labels = dict() # Dump this as a json file
             pbar = tqdm(total=len(image_paths))
@@ -153,19 +131,3 @@ class Preprocessor:
             # Dump this as a json file to the root
             with open(os.path.join(root, 'detections.pkl'), "wb") as outfile:
                 pickle.dump(root_labels, outfile)
-
-    
-
-if __name__ == '__main__':
-    env_path = '/home/irmak/Workspace/clip-policy/data'
-    preprocessor = Preprocessor(
-        env_path = env_path
-    )
-    print(f'preprocessor.root: {preprocessor.roots}')
-
-    preprocessor.process_env()
-
-
-
-
-

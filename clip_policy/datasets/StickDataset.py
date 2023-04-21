@@ -105,7 +105,7 @@ class StickDataset(BaseStickDataset, abc.ABC):
         # L: number of words in the given query
 
         total_cost = 0
-        for frame_embeddings in self.clip_embeddings:
+        for frame_embeddings in self.clip_embeddings: # Will have clip embeddings at each frame - list of embeddings
             # calculate N x L cost matrix
             cost_matrix = torch.cdist(frame_embeddings, clip_embeddings, p=2)
             # use hungarian algorithm to find the best match
