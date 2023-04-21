@@ -50,7 +50,7 @@ class BaseStickDataset(Dataset, abc.ABC):
         self.conf_pth = self.traj_path / "confs"
         self.labels_pth = self.traj_path / "labels.json"
         # TODO: change the followibg line to the correct path
-        self.detection_pth = self.traj_path / "detections"
+        self.detection_pth = self.traj_path / "detections.pkl"
 
         self.labels = json.load(self.labels_pth.open("r"))
         self.img_keys = sorted(self.labels.keys())

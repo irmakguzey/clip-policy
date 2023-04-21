@@ -1,0 +1,10 @@
+env_path: '/home/irmak/Workspace/clip-policy/data'
+classifier_threshold: 0.3
+classifier_classes:
+  - 'drawer'
+  - 'door'
+  - 'handle'
+  - 'cabinet'
+  - 'cup'
+  - 'glass'
+  - 'mug'

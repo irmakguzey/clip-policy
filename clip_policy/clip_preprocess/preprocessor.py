@@ -45,12 +45,12 @@ class Preprocessor:
     def __init__(
             self,
             env_path, # Main directory
+            score_thresh_test,
+            classes,
             cfg_merge_path = '/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml',
             model_weights_path = 'https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth',
-            score_thresh_test = 0.5,
             zeroshot_weight_path = 'rand',
             one_class_per_proposal = True,
-            classes = ['cabinet', 'drawer', 'gripper']
     ):
 
         cfg = get_cfg()
@@ -75,6 +75,7 @@ class Preprocessor:
         num_classes = len(classes)
         reset_cls_test(self.predictor.model, all_vocab_classifier, num_classes)
         self.classes = classes
+        print(f'self.classes: {self.classes}')
 
         # Set the image transform
         self.image_transform = T.Compose([
@@ -104,7 +105,7 @@ class Preprocessor:
     def _get_class_names(self, pred_class_idx):
         class_names = []
         for i in pred_class_idx:
-            class_names.append(self.classes[i])
+            class_names.append(self.classes[int(i)])
 
         return class_names
 
@@ -150,8 +151,10 @@ class Preprocessor:
                 pbar.set_description(f'Processed Image: {image_path}')
 
             # Dump this as a json file to the root
-            with open(os.path.join(root, 'labels.pkl'), "wb") as outfile:
+            with open(os.path.join(root, 'detections.pkl'), "wb") as outfile:
                 pickle.dump(root_labels, outfile)
+
+    
 
 if __name__ == '__main__':
     env_path = '/home/irmak/Workspace/clip-policy/data'
