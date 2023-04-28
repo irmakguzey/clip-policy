@@ -30,9 +30,9 @@ import cv2
 
 import liblzfse
 
-from utils.r3D_semantic_dataset import load_depth
-from utils.metrics import get_act_mean_std
-from utils.traverse_data import iter_dir_for_traj_pths
+from clip_policy.utils.r3D_semantic_dataset import load_depth
+from clip_policy.utils.metrics import get_act_mean_std
+from clip_policy.utils.traverse_data import iter_dir_for_traj_pths
 
 
 from scipy.optimize import linear_sum_assignment
@@ -94,9 +94,26 @@ class StickDataset(BaseStickDataset, abc.ABC):
         self.traj_skip = traj_skip
         self.reformat_labels(self.labels)
         self.act_metrics = None
+        self.load_all_clip_embeddings()
 
     def set_act_metrics(self, act_metrics):
         self.act_metrics = act_metrics
+
+    def load_all_clip_embeddings(self, max_detections_per_frame=15):
+        self.clip_embeddings = np.zeros(
+            (len(self.img_keys), max_detections_per_frame, 512)
+        )
+        with open(self.detection_pth, "rb") as f:
+            detections = pickle.load(f)
+        keys = list(detections.keys())
+        key_base = keys[0][:-8]
+        for i in range(len(self.img_keys)):
+            clip_embeds = detections[key_base + self.img_keys[i]]["clip_embeddings"].T
+            # clip_embeds  is of shape (num_detections, 512)
+            detect_id = min(clip_embeds.shape[0], max_detections_per_frame)
+            self.clip_embeddings[i, :detect_id, :] = clip_embeds[
+                :max_detections_per_frame, :
+            ]
 
     def get_cost_from_clip(self, clip_embeddings):
         # clip_embeddings: (L, 512)
@@ -105,13 +122,20 @@ class StickDataset(BaseStickDataset, abc.ABC):
         # L: number of words in the given query
 
         total_cost = 0
-        for frame_embeddings in self.clip_embeddings: # Will have clip embeddings at each frame - list of embeddings
+        for idx, frame_embeddings in enumerate(
+            self.clip_embeddings
+        ):  # Will have clip embeddings at each frame - list of embeddings
             # calculate N x L cost matrix
-            cost_matrix = torch.cdist(frame_embeddings, clip_embeddings, p=2)
+            # print(frame_embeddings.shape, clip_embeddings.shape)
+            cost_matrix = torch.cdist(
+                torch.Tensor(frame_embeddings), clip_embeddings, p=2
+            )
+            # print(cost_matrix.shape, cost_matrix)
             # use hungarian algorithm to find the best match
             row_ind, col_ind = linear_sum_assignment(cost_matrix)
             # add the cost of the best match
             total_cost += cost_matrix[row_ind, col_ind].sum()
+            # print(idx, cost_matrix[row_ind, col_ind].sum())
         return total_cost / len(self.clip_embeddings)
 
     def reformat_labels(self, labels):

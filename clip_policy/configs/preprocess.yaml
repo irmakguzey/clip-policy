@@ -1,4 +1,4 @@
-env_path: '/home/irmak/Workspace/clip-policy/data'
+env_path: '/scratch/ar7420/VINN/clip-policy/data' #'/home/irmak/Workspace/clip-policy/data'
 classifier_threshold: 0.3
 visualize: True
 classifier_classes:

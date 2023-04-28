@@ -145,5 +145,8 @@ notebooks/generated_gifs/*
 notebooks/*.gif
 notebooks/.ipynb_checkpoints/*
 
+*.jpg
+*.ipynb
 *.jpg.*
 data/*
+weights/*
