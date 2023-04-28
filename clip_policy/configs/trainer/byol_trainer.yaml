@@ -1,0 +1,4 @@
+_target_: trainers.ssl.BYOL.BYOLTrainer
+_partial_: true
+scheduler: null
+save_every: 15

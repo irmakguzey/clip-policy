@@ -1,0 +1,192 @@
+##### Door Opening Kitchen 1 #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Opening/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-11--23-20-07_0'
+    - '2023-04-11--23-20-22_0'
+
+
+
+##### Door Opening Kitchen 2 #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Opening/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-12--01-04-49_0'
+    - '2023-04-12--01-30-41_0'
+
+##### Door Opening Meeting Room #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Opening/CDS_Home/Env3'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-14--23-44-27_0'
+    - '2023-04-14--23-44-42_0'
+
+##### Door Opening Cabinet #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Opening/CDS_Home/Env4'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-17--21-19-30_0'
+    - '2023-04-17--21-19-11_0'
+
+
+##### Drawer Opening Kitchen #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Drawer_Opening/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-11--23-20-45_0'
+    - '2023-04-11--23-21-10_0'
+
+##### Drawer Opening Corridor #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Drawer_Opening/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-11--23-15-14_0'
+    - '2023-04-11--23-15-41_0'
+
+
+##### Door Closing Kitchen #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Closing/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-12--01-27-44_0'
+    - '2023-04-12--01-28-02_0'
+
+##### Door Closing Cabinet #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Door_Closing/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-17--21-42-54_0'
+    - '2023-04-17--21-42-11_0'
+
+##### Drawer Closing Kitchen #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Drawer_Closing/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-12--01-46-49_0'
+    - '2023-04-12--01-47-41_0'
+
+##### Drawer Closing  Corridor #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Drawer_Closing/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-14--14-35-46_0'
+    - '2023-04-14--14-36-12_0'
+
+##### Button Pressing Microwave #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Button_Pressing/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-11--23-22-02_0'
+    - '2023-04-11--23-22-17_0'
+
+
+# ##### Button Dispenser #####
+# data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Button_Pressing/CDS_Home/Env2'
+# val_mask: {'home': [], 'env': [], 'traj':['2023-04-13--22-13-29_0', '2023-04-13--22-13-48_0']}
+
+##### Chair Pulling #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Chair_Pulling/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-14--23-06-59_0'
+    - '2023-04-14--23-07-20_0'
+
+##### Pick And Place Dispenser #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Pick_And_Place/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-12--00-47-44_0'
+    - '2023-04-12--00-48-03_0'
+
+##### Pick And Place Bin #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Pick_And_Place/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-17--20-51-22_0'
+    - '2023-04-17--20-51-48_0'
+
+##### Pouring #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Pouring/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-11--23-18-26_0'
+    - '2023-04-11--23-19-03_0'
+
+
+##### Wiping #####
+
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Wiping/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-15--18-43-11_0'
+    - '2023-04-15--18-43-51_0'
+  
+
+##### Unplugging #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Unplugging/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-19--12-34-09_0'
+    - '2023-04-19--12-34-49_0'
+
+##### Chain Microwave #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Chain/CDS_Home/Env1'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-19--05-17-05_0'
+    - '2023-04-19--05-16-32_0'
+
+
+##### Chain Cabinet #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Chain/CDS_Home/Env2'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-19--13-19-31_0'
+    - '2023-04-19--13-20-02_0'
+
+##### Chain Drawer #####
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Chain/CDS_Home/Env3'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-19--04-48-21_0'
+    - '2023-04-19--04-48-48_0'

@@ -1,0 +1,21 @@
+# _target_: dataloaders.StickDataset.get_train_image_stick_dataset
+# _partial_: true
+# data_path: '/vast/ar7420/iphone_data/New_Home_Export_Leo/Door_Opening'
+# val_mask: {'home': [], 'env': ['/Lerrel_Home/Env2'], 'traj':[]}
+# mask_texts: ['Lerrel_Home/Env5']
+# img_size: [224, 224]
+
+_target_: dataloaders.StickDataset.get_train_image_stick_dataset
+_partial_: true
+data_path: '/vast/ar7420/iphone_data/Benchmarking_Export/Chain/CDS_Home/Env3'
+val_mask:
+  home: []
+  env: []
+  traj: 
+    - '2023-04-19--04-48-21_0'
+    - '2023-04-19--04-48-48_0'
+
+
+mask_texts: []
+img_size: [224, 224]
+

@@ -1,0 +1,30 @@
+_target_: models.nn.VINN
+_partial_: true
+encoder:
+  _target_: models.encoders.encoder.ImageEncoder
+  encoder_type: resnet18
+  pretrained: True #False
+
+enc_weight_pth: /scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-22/02-57-10/weights/byol_chain_cabinet_test_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-19/15-20-06/weights/byol_chain_cabinet_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-19/15-11-51/weights/byol_chain_microwave_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/22-42-58/weights/byol_wiping_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/18-22-08/weights/byol_pouring_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/18-12-00/weights/byol_pick_and_place_bin_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/17-48-02/weights/byol_pick_and_place_dispenser_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/17-40-10/weights/byol_door_closing_cabinet_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-18/17-16-14/weights/byol_door_opening_cabinet_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/21-23-45/weights/byol_door_opening_kitchen_2_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-15/23-56-24/weights/byol_door_opening_meeting_room_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-15/23-52-02/weights/byol_chair_pulling_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/22-06-33/weights/byol_button_press_disp_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/21-45-12/weights/byol_drawer_closing_kitchen_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/21-40-35/weights/byol_door_closing_kitchen_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/21-50-26/weights/byol_drawer_closing_corridor_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-14/21-23-45/weights/byol_door_opening_kitchen_2_105.pth
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-12/03-09-35/weights/byol_drawer_opening_corridor_105.pth 
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-12/03-11-49/weights/byol_button_press_kitchen_105.pth  
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-12/03-02-34/weights/byol_drawer_opening_kitchen_105.pth 
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-12/01-53-24/weights/byol_door_opening_test_45.pth 
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-12/03-09-35/weights/byol_drawer_opening_corridor_105.pth 
+#/scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-11/02-03-52/weights/byol_door_opening_test_105.pth

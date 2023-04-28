@@ -1,0 +1,4 @@
+_target_: models.encoders.encoder.ImageEncoder
+_partial_: true
+encoder_type: resnet18
+pretrained: True

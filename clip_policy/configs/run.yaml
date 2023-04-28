@@ -1,0 +1,39 @@
+
+save_img_path: ./robot_images
+save_img: false
+
+
+
+#########======== Config for running VINN ========##########
+defaults:
+  - model: image_vinn
+
+model:
+  enc_weight_pth: null
+
+model_pth: /home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_closing.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_button_press_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_encoder.pkl
+
+experiment: vinn_with_byol_encoder
+k: 4
+bs: 64
+model_type: vinn
+save_nbhrs: false
+action_space: 7
+
+
+#########======== Config for running BC ========##########
+
+# defaults:
+#   - model: image_bc
+#   - dataset: img_dataset
+
+# model:
+#   enc_weight_pth: null
+
+# model_pth: /home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_drawer_closing_kitchen_96.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_door_opening_kitchen_98.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_drawer_opening_corridor_28.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_drawer_closing_corridor_20.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_drawer_opening_kitchen_74.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_button_press_kitchen_38.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_door_opening_test_66.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_door_opening_test_16.pth #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/bc/bc_representations_frozen_door_opening_test_66.pth
+
+# model_type: bc
+# experiment: bc_with_byol_encoder
+
+
+

@@ -1,0 +1,4 @@
+_target_: trainers.supervised.bc_trainer.BcTrainer
+_partial_: true
+scheduler: null
+save_every: 2

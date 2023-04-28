@@ -1,0 +1,5 @@
+_target_: trainers.vinn_trainer.VINNTrainer
+_partial_: true
+scheduler: null
+save_every: 2
+max_k: 15
