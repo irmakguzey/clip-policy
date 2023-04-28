@@ -1,0 +1,59 @@
+defaults:
+  - dataset:  img_dataset #img_dataset #img_grasp_patch_door_handle  #img_grasp_patch_combined #img_grasp_patch
+  - model: image_bc
+  - trainer: bc_trainer
+
+
+#freeze encoder in bc model
+
+model:
+    freeze_encoder: True
+
+
+#overwrite default hydra config verbose to DEBUG
+
+#checkpointing and optimizations
+weights_dir: ./weights
+# save_freq: 2
+
+
+#train hyperparameters
+bs: 512
+lr: 0.001
+# lr: 0.0001
+epochs: 100
+num_workers: 4
+device: cuda
+optimizer: adam
+momentum: 0.9
+weight_decay: 1.5e-4
+seed: 42
+
+
+
+#description about the training
+project: behavior_cloning
+experiment: bc_representations_frozen_chain_cabinet
+#bc_representations_frozen_chain_microwave
+#bc_representations_frozen_wiping
+#bc_representations_frozen_pouring
+#bc_representations_frozen_pick_and_place_bin
+#bc_representations_frozen_pick_and_place_dispenser
+#bc_representations_frozen_door_closing_cabinet
+#bc_representations_frozen_door_opening_cabinet
+#bc_representations_frozen_door_opening_meeting_room
+#bc_representations_frozen_chair_pulling
+#bc_representations_frozen_button_press_disp
+#bc_representations_frozen_drawer_closing_kitchen
+#bc_representations_frozen_door_closing
+#bc_representations_frozen_drawer_closing_corridor
+#bc_representations_frozen_door_opening_kitchen
+#bc_representations_frozen_drawer_opening_corridor
+#bc_representations_frozen_button_press_kitchen 
+#bc_representations_frozen_pouring 
+#bc_representations_frozen_drawer_opening_kitchen 
+#bc_representations_frozen_drawer_opening_corridor 
+#bc_representations_frozen_door_opening_1
+# experiment: bc_representations_door_opening_test
+
+

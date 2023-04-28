@@ -1,0 +1,32 @@
+defaults:
+  - dataset: img_dataset_byol #img_grasp_patch_door_handle  #img_grasp_patch_combined #img_grasp_patch
+  - model: resnet_encoder
+  - trainer: byol_trainer
+
+
+
+#overwrite default hydra config verbose to DEBUG
+
+#checkpointing and optimizations
+weights_dir: ./weights
+# save_freq: 15
+
+
+#train hyperparameters
+bs: 512
+lr: 0.1
+epochs: 106
+num_workers: 4
+device: cuda
+optimizer: lars
+momentum: 0.9
+weight_decay: 1.5e-6
+seed: 42
+
+
+
+#description about the training
+project: representation_learning
+experiment: byol_chain_cabinet_test
+
+

@@ -1,0 +1,55 @@
+defaults:
+  - dataset: img_dataset #img_grasp_patch_door_handle  #img_grasp_patch_combined #img_grasp_patch
+  - model: image_vinn
+  - trainer: vinn_trainer
+
+
+#overwrite default hydra config verbose to DEBUG
+
+#checkpointing and optimizations
+weights_dir: ./weights
+# save_freq: 2
+
+
+#junk values, wont be used for vinn
+bs: 256
+lr: 0.001
+epochs: 100
+optimizer: adam
+momentum: 0.9
+weight_decay: 1.5e-6
+seed: 42
+
+#train hyperparameters
+num_workers: 4
+device: cuda
+
+
+
+
+#description about the training
+project: nn
+experiment: vinn_with_byol_chain_cabinet
+#vinn_with_byol_chain_microwave
+#vinn_with_byol_wiping
+#vinn_with_byol_pouring
+#vinn_with_byol_pick_and_place_bin
+#vinn_with_byol_pick_and_place_dispenser
+#vinn_with_byol_door_closing_cabinet
+#vinn_with_byol_door_opening_cabinet
+#vinn_with_byol_door_opening_kitchen_2
+#vinn_with_byol_door_opening_meeting_room
+#vinn_with_byol_chair_pulling
+#vinn_with_byol_button_press_disp
+#vinn_with_byol_drawer_closing_kitchen
+#vinn_with_byol_door_closing
+#vinn_with_byol_drawer_closing_corridor
+#vinn_with_byol_door_opening_kitchen_2
+#vinn_with_byol_drawer_opening_corridor
+#vinn_with_byol_button_press_kitchen 
+#vinn_with_byol_drawer_opening_kitchen 
+#vinn_with_byol_door_opening_kitchen 
+#vinn_with_byol_drawer_opening_corridor 
+#vinn_with_byol_encoder
+
+
