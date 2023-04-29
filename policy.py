@@ -52,13 +52,15 @@ def main(cfg : DictConfig) -> None:
                 traj_len = 1,
                 traj_skip = 1,
                 time_skip = 4,
-                time_offset = 5,
+                time_offset = time_offset_n,
                 time_trim = 5,
                 img_size = 224,
                 pre_load = True,
                 transforms = transforms,
             )
-            for traj_path in selected_traj_paths
+            for traj_path, time_offset_n in itertools.product(
+                selected_traj_paths, [5, 7]
+            )
         ]
     )
     dataloader = DataLoader(
