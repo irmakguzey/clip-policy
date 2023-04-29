@@ -91,6 +91,7 @@ class StickDataset(BaseStickDataset, abc.ABC):
         self.traj_skip = traj_skip
         self.reformat_labels(self.labels)
         self.act_metrics = None
+        # print('traj_path: {}')
         self.load_all_clip_embeddings()
 
     def set_act_metrics(self, act_metrics):
@@ -119,10 +120,15 @@ class StickDataset(BaseStickDataset, abc.ABC):
         # L: number of words in the given query
 
         total_cost = 0
+        zero_frames = 0
         for idx, frame_embeddings in enumerate(
             self.clip_embeddings
         ):  # Will have clip embeddings at each frame - list of embeddings
             # calculate N x L cost matrix
+            if (frame_embeddings == 0).all():
+                zero_frames += 1
+                # print(f'{idx} skipped')
+                continue
             cost_matrix = torch.cdist(
                 torch.Tensor(frame_embeddings), clip_embeddings, p=2
             )
@@ -130,8 +136,11 @@ class StickDataset(BaseStickDataset, abc.ABC):
             row_ind, col_ind = linear_sum_assignment(cost_matrix)
             # add the cost of the best match
             total_cost += cost_matrix[row_ind, col_ind].sum()
-            # print(idx, cost_matrix[row_ind, col_ind].sum())
-        return total_cost / len(self.clip_embeddings)
+        #     print(idx, cost_matrix[row_ind, col_ind].sum())
+
+        # print('end cost: {}'.format(total_cost / (len(self.clip_embeddings)-zero_frames)))
+        # print('----------')
+        return total_cost / (len(self.clip_embeddings)-zero_frames)
 
     def reformat_labels(self, labels):
         # reformat labels to be delta xyz, delta rpy, next gripper state
