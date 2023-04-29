@@ -34,8 +34,8 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 # Detic libraries
-sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
-sys.path.insert(0, "/scratch/ar7420/VINN/Detic/")
+# sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
+# sys.path.insert(0, "/scratch/ar7420/VINN/Detic/")
 # sys.path.insert(0,'/home/irmak/Workspace/clip-policy/third_party/CenterNet2/') # NOTE: Make sure this will work
 from centernet.config import add_centernet_config
 
@@ -54,10 +54,10 @@ class Preprocessor:
         score_thresh_test,
         classes,
         visualize=True,
-        # cfg_merge_path="/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
-        # model_weights_path="https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
-        cfg_merge_path="/scratch/ar7420/VINN/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
-        model_weights_path="/scratch/ar7420/VINN/clip-policy/weights/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
+        cfg_merge_path="/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
+        model_weights_path="https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
+        # cfg_merge_path="/scratch/ar7420/VINN/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
+        # model_weights_path="/scratch/ar7420/VINN/clip-policy/weights/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
         zeroshot_weight_path="rand",
         one_class_per_proposal=True,
     ):

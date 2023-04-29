@@ -10,7 +10,7 @@ import sys
     version_base=None, config_path="clip_policy/configs", config_name="preprocess"
 )
 def main(cfg: DictConfig) -> None:
-    sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
+    # sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
 
     prep = Preprocessor(
         env_path=cfg.env_path,

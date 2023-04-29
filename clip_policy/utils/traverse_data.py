@@ -82,7 +82,7 @@ def iter_dir_for_traj_pths(
     if "Home" in str(base_name):
         train_traj_paths = iter_dir(data_path, val_mask, mask_texts, depth=1)
         val_traj_paths = iter_dir_val(data_path, val_mask, depth=1)
-    elif "Env" in str(base_name):
+    elif "Env" in str(base_name) or 'data' in str(base_name):
         train_traj_paths = iter_dir(data_path, val_mask, mask_texts, depth=2)
         val_traj_paths = iter_dir_val(data_path, val_mask, depth=2)
     else:

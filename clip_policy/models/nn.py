@@ -47,18 +47,18 @@ class VINN(nn.Module):
 
     def set_dataset(self, dataloader):
         self.bs = dataloader.batch_size
-        for dataset in tqdm(dataloader.dataset.datasets):
+        for dataset in tqdm(dataloader.dataset.datasets): # Traverse through multiple datasets
             for i, (image, label) in enumerate(dataset):
                 image = image.to(self.device)
                 label = torch.Tensor(label).to("cpu").detach()
                 pth = dataset.get_img_pths(i)[0]
                 representation = self.encoder(image).to("cpu").detach()
-                if self.representations is None:
+                if self.representations is None: # If this is the first batch
                     self.representations = representation
                     self.actions = label
                     self.img_pths = [pth]
                     self.imgs = [image.to("cpu").detach().numpy()]
-                else:
+                else: # For all the rest batches
                     self.representations = torch.cat(
                         (self.representations, representation), 0
                     )
@@ -83,20 +83,17 @@ class VINN(nn.Module):
 
         all_distances = torch.zeros(
             (batch_images.shape[0], self.representations.shape[0])
-        )
+        ) 
 
         for i in range(0, self.representations.shape[0] // self.bs + 1):
 
             dat_rep = self.representations[
                 i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
             ].to(self.device)
-            dat_act = self.actions[
-                i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
-            ].to(self.device)
             batch_rep = self.encoder(batch_images).to(self.device)
             all_distances[
                 :, i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
-            ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach())
+            ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach()) # Getting the distance and saving it as such here
 
         top_k_distances, indices = torch.topk(all_distances, k, dim=1, largest=False)
         top_k_actions = self.actions[indices].to(self.device)

@@ -1,1 +1,10 @@
 query: "I have a drawer on my handle"
+
+data_path: '/home/irmak/Workspace/clip-policy/data'
+max_dataset_num: 4
+k: 4
+batch_size: 64
+action_space: 7
+
+save_img_path: ./robot_images
+save_img: false

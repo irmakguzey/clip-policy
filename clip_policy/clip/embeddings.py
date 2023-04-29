@@ -25,8 +25,8 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
 # Detic libraries
-sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
-sys.path.insert(0, "/scratch/ar7420/VINN/Detic/")
+# sys.path.insert(0, "/scratch/ar7420/VINN/Detic/third_party/CenterNet2/")
+# sys.path.insert(0, "/scratch/ar7420/VINN/Detic/")
 # sys.path.insert(0,'/home/irmak/Workspace/clip-policy/third_party/CenterNet2/') # NOTE: Make sure this will work
 from centernet.config import add_centernet_config
 

@@ -30,10 +30,7 @@ import cv2
 
 import liblzfse
 
-from clip_policy.utils.r3D_semantic_dataset import load_depth
-from clip_policy.utils.metrics import get_act_mean_std
-from clip_policy.utils.traverse_data import iter_dir_for_traj_pths
-
+from clip_policy.utils import get_act_mean_std, load_depth, iter_dir_for_traj_pths
 
 from scipy.optimize import linear_sum_assignment
 
@@ -126,11 +123,9 @@ class StickDataset(BaseStickDataset, abc.ABC):
             self.clip_embeddings
         ):  # Will have clip embeddings at each frame - list of embeddings
             # calculate N x L cost matrix
-            # print(frame_embeddings.shape, clip_embeddings.shape)
             cost_matrix = torch.cdist(
                 torch.Tensor(frame_embeddings), clip_embeddings, p=2
             )
-            # print(cost_matrix.shape, cost_matrix)
             # use hungarian algorithm to find the best match
             row_ind, col_ind = linear_sum_assignment(cost_matrix)
             # add the cost of the best match

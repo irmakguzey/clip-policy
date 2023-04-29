@@ -1,1 +1,1 @@
-from . import *
+from .stick_dataset import *
