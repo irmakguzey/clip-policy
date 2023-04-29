@@ -22,18 +22,21 @@ def main(cfg : DictConfig) -> None:
     data_path = Path(cfg.data_path)
     all_traj_paths, _, _ = iter_dir(data_path, None, None)
     costs = []
+    used_traj_paths, used_offsets = [], []
     transforms = torchvision.transforms.Compose([
         torchvision.transforms.Normalize(
             mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
         )
     ])
-    for traj_path in all_traj_paths:
+    for traj_path, time_offset_n in itertools.product(
+        all_traj_paths, [5, 7]
+    ):
         dataset = ImageStickDataset(
             traj_path = traj_path,
             traj_len = 1,
             traj_skip = 1,
             time_skip = 4,
-            time_offset = 5,
+            time_offset = time_offset_n,
             time_trim = 5,
             img_size = 224,
             pre_load = True,
@@ -43,8 +46,13 @@ def main(cfg : DictConfig) -> None:
         costs.append(
             dataset.get_cost_from_clip(query_clip_emb.T)
         )
+        used_traj_paths.append(traj_path)
+        used_offsets.append(time_offset_n)
+
     sorted_traj_idx = np.argsort(costs)
-    selected_traj_paths = np.array(all_traj_paths)[sorted_traj_idx][:cfg.max_dataset_num]
+    selected_traj_paths = np.array(used_traj_paths)[sorted_traj_idx][:cfg.max_dataset_num]
+    selected_time_offsets = np.array(used_offsets)[sorted_traj_idx][:cfg.max_dataset_num]
+
     dataset = ConcatDataset( # This will be the final dataset
         [
             ImageStickDataset(
@@ -58,12 +66,12 @@ def main(cfg : DictConfig) -> None:
                 pre_load = True,
                 transforms = transforms,
             )
-            for traj_path, time_offset_n in itertools.product(
-                selected_traj_paths, [5, 7]
+            for traj_path, time_offset_n in zip(
+                selected_traj_paths, selected_time_offsets
             )
         ]
     )
-    dataloader = DataLoader(
+    dataloader = torch.utils.data.DataLoader(
         dataset = dataset, 
         batch_size = cfg.batch_size,
         shuffle=False,
@@ -87,7 +95,7 @@ def main(cfg : DictConfig) -> None:
     )
     model.k = cfg.k
     model.bs = cfg.batch_size
-    model.set_dataset(dataset)
+    model.set_dataset(dataloader)
     model.eval()
 
     # Start and run the controller

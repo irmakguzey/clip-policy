@@ -148,6 +148,7 @@ notebooks/.ipynb_checkpoints/*
 *.jpg
 *.ipynb
 *.jpg.*
+*.zip
 data/*
 old_data/*
 weights/*
