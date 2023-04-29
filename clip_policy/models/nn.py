@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import pickle as pkl
 
+from .buffer import NearestNeighborBuffer
 
 class VINN(nn.Module):
     def __init__(self, encoder, enc_weight_pth=None, cfg=None):
@@ -24,6 +25,9 @@ class VINN(nn.Module):
         self.dist_scale_func = lambda x: (softmax(-x))
         self.encoder.eval()
         self.device = "cpu"
+
+        self.selected_k = 10 # First 
+        self.buffer = NearestNeighborBuffer(buffer_size=10)
 
     def set_act_metrics(self, cfg):
         if cfg is not None and "act_metrics" in cfg["dataset"]:
@@ -95,7 +99,20 @@ class VINN(nn.Module):
                 :, i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
             ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach()) # Getting the distance and saving it as such here
 
-        top_k_distances, indices = torch.topk(all_distances, k, dim=1, largest=False)
+        top_k_distances, selected_indices = torch.topk(all_distances, self.selected_k, dim=1, largest=False)
+
+        indices_idx = []
+        while len(indices_idx) < k:
+            indices_idx.append(
+                self.buffer.choose(selected_indices)
+            )
+        indices_idx = torch.IntTensor(indices_idx)
+        print('indices_idx: {}'.format(indices_idx))
+        indices = selected_indices[indices_idx]
+        print('selected_indices: {}, (indices_idx: {}) -> indices: {}'.format(
+            selected_indices, indices_idx, indices
+        ))
+
         top_k_actions = self.actions[indices].to(self.device)
         weights = self.dist_scale_func(top_k_distances.to(self.device))
         pred = torch.sum(top_k_actions * weights.unsqueeze(-1), dim=1)
