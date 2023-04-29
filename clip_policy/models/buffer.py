@@ -14,7 +14,16 @@ class NearestNeighborBuffer(object):
         return item
 
     def choose(self, nn_idxs):
+        # print("nn_idxs in choose: {}".format(nn_idxs))
         for idx in range(len(nn_idxs)):
+            print(
+                "idx: {}, nn_idxs[idx]: {}, exempted_queue: {}".format(
+                    idx,
+                    nn_idxs[idx],
+                    self.exempted_queue,
+                    # nn_idxs[idx] not in self.exempted_queue,
+                )
+            )
             if nn_idxs[idx] not in self.exempted_queue:
                 self.put(nn_idxs[idx])
                 return idx

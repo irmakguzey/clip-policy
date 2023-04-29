@@ -17,8 +17,8 @@ import cv2
 from PIL import Image
 import os
 
-from robot.publisher import PolicyPublisher
-from robot.subscriber import ImageSubscriber
+from clip_policy.robot.publisher import PolicyPublisher
+from clip_policy.robot.subscriber import ImageSubscriber
 
 
 class Controller:
@@ -122,7 +122,7 @@ class Controller:
             h = input("Enter height:")
 
             self.publisher.publish(
-                "home_params_publisher", [float(h), 0.02, 0.0, 0.0, 0.05, 0.0, 1.0]
+                "home_params_publisher", [float(h), 0.02, 0.0, 0.0, 0.07, 0.03, 1.0]
             )
             self.run_for -= 1
             return None
@@ -132,7 +132,7 @@ class Controller:
             base, h = self.schedule_init(int(sched_no))
             print(h, base)
             self.publisher.publish(
-                "home_params_publisher", [h, 0.02, base, 0.0, 0.05, 0.0, 1.0]
+                "home_params_publisher", [h, 0.02, base, 0.0, 0.07, 0.03, 1.0]
             )
 
             self.run_for -= 1
@@ -215,6 +215,7 @@ class Controller:
 
             gripper = action_tensor[-1]
             print("Gripper:", gripper)
+            print("Action:", action_robot)
 
             self.publisher.publish_action(action_robot, gripper)
 

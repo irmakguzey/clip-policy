@@ -7,6 +7,7 @@ import pickle as pkl
 
 from .buffer import NearestNeighborBuffer
 
+
 class VINN(nn.Module):
     def __init__(self, encoder, enc_weight_pth=None, cfg=None):
         super(VINN, self).__init__()
@@ -14,7 +15,8 @@ class VINN(nn.Module):
         self.cfg = cfg
 
         self.k = 5
-
+        if "action_space" in cfg:
+            self.action_space = cfg["action_space"]
         self.set_act_metrics(cfg)
 
         self.representations = None
@@ -26,8 +28,8 @@ class VINN(nn.Module):
         self.encoder.eval()
         self.device = "cpu"
 
-        self.selected_k = 10 # First 
-        self.buffer = NearestNeighborBuffer(buffer_size=10)
+        self.selected_k = cfg["buffer_size"]  # First
+        self.buffer = NearestNeighborBuffer(buffer_size=cfg["buffer_size"])
 
     def set_act_metrics(self, cfg):
         if cfg is not None and "act_metrics" in cfg["dataset"]:
@@ -51,18 +53,20 @@ class VINN(nn.Module):
 
     def set_dataset(self, dataloader):
         self.bs = dataloader.batch_size
-        for dataset in tqdm(dataloader.dataset.datasets): # Traverse through multiple datasets
+        for dataset in tqdm(
+            dataloader.dataset.datasets
+        ):  # Traverse through multiple datasets
             for i, (image, label) in enumerate(dataset):
                 image = image.to(self.device)
                 label = torch.Tensor(label).to("cpu").detach()
                 pth = dataset.get_img_pths(i)[0]
                 representation = self.encoder(image).to("cpu").detach()
-                if self.representations is None: # If this is the first batch
+                if self.representations is None:  # If this is the first batch
                     self.representations = representation
                     self.actions = label
                     self.img_pths = [pth]
                     self.imgs = [image.to("cpu").detach().numpy()]
-                else: # For all the rest batches
+                else:  # For all the rest batches
                     self.representations = torch.cat(
                         (self.representations, representation), 0
                     )
@@ -76,7 +80,7 @@ class VINN(nn.Module):
             if return_indices:
                 act, indices = self(img, return_indices=True)
             else:
-                act = self(img).squeeze().detach().cpu()
+                act = self(img).squeeze().detach()
             act = self.denorm_action(act)
 
         return act if not return_indices else (act, indices)
@@ -87,33 +91,38 @@ class VINN(nn.Module):
 
         all_distances = torch.zeros(
             (batch_images.shape[0], self.representations.shape[0])
-        ) 
+        )
 
         for i in range(0, self.representations.shape[0] // self.bs + 1):
-
             dat_rep = self.representations[
                 i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
             ].to(self.device)
             batch_rep = self.encoder(batch_images).to(self.device)
             all_distances[
                 :, i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
-            ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach()) # Getting the distance and saving it as such here
+            ] = (
+                torch.cdist(batch_rep, dat_rep).to("cpu").detach()
+            )  # Getting the distance and saving it as such here
 
-        top_k_distances, selected_indices = torch.topk(all_distances, self.selected_k, dim=1, largest=False)
+        top_k_distances, selected_indices = torch.topk(
+            all_distances, self.selected_k, dim=1, largest=False
+        )
 
         indices_idx = []
         while len(indices_idx) < k:
-            indices_idx.append(
-                self.buffer.choose(selected_indices)
+            indices_idx.append(self.buffer.choose(selected_indices[0]))
+        indices_idx = torch.tensor([indices_idx])
+        # print("indices_idx: {}".format(indices_idx))
+        indices = selected_indices[0][indices_idx]
+        print(
+            "selected_indices: {}, (indices_idx: {}) -> indices: {}".format(
+                selected_indices[0], indices_idx, indices
             )
-        indices_idx = torch.IntTensor(indices_idx)
-        print('indices_idx: {}'.format(indices_idx))
-        indices = selected_indices[indices_idx]
-        print('selected_indices: {}, (indices_idx: {}) -> indices: {}'.format(
-            selected_indices, indices_idx, indices
-        ))
+        )
 
         top_k_actions = self.actions[indices].to(self.device)
+        top_k_distances = top_k_distances[0][indices_idx].to(self.device)
+        print("top_k_distances.shape: {}".format(top_k_distances.shape))
         weights = self.dist_scale_func(top_k_distances.to(self.device))
         pred = torch.sum(top_k_actions * weights.unsqueeze(-1), dim=1)
 
@@ -129,7 +138,7 @@ class VINN(nn.Module):
             self.act_mean,
             self.act_std,
             self.img_pths,
-            self.imgs
+            self.imgs,
         ]
         save_var_names = [
             "representations",

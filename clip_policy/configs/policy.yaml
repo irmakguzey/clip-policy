@@ -1,10 +1,15 @@
-query: "I have a drawer on my handle"
+query: "Pick the cup"
 
-data_path: '/home/irmak/Workspace/clip-policy/data'
-max_dataset_num: 4
-k: 4
+data_path: '/home/robot-lab/hello-robot/anant/clip-policy/data'
+max_dataset_num: 5
+k: 1
+buffer_size: 50
 batch_size: 64
 action_space: 7
 
+save_state_variables: false # If not it will do the training from scratch
+
 save_img_path: ./robot_images
-save_img: false
+save_img: true
+model_type: vinn
+save_nbhrs: true
