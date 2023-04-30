@@ -1,9 +1,7 @@
-_target_: models.nn.VINN
+_target_: clip_policy.models.VINN
 _partial_: true
 encoder:
-  _target_: models.encoders.encoder.ImageEncoder
+  _target_: clip_policy.models.ImageEncoder
   encoder_type: resnet18
   pretrained: True #False
-
-# enc_weight_pth: None
-# enc_weight_pth: /scratch/ar7420/VINN/imitation-in-homes/outputs/2023-04-22/02-57-10/weights/byol_chain_cabinet_test_105.pth
+enc_weight_pth: /home/robot-lab/hello-robot/anant/clip-policy/weights/byol_nlu_135.pth

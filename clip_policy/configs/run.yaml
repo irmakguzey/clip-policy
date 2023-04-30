@@ -8,17 +8,24 @@ save_img: false
 defaults:
   - model: image_vinn
 
-model:
-  enc_weight_pth: null
+# model:
+#   enc_weight_pth: null
 
-model_pth: /home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_closing.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_button_press_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_encoder.pkl
-
+# model_pth: /home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_closing.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_closing_corridor.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_drawer_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_button_press_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_door_opening_kitchen.pkl #/home/robot-lab/hello-robot/anant/imitation-in-homes/weights/vinn/vinn_with_byol_encoder.pkl
+model_pth: /home/robot-lab/hello-robot/anant/clip-policy/weights/state_variables.pkl
 experiment: vinn_with_byol_encoder
+data_path: /home/robot-lab/hello-robot/anant/clip-policy/data
 k: 4
-bs: 64
+batch_size: 64
 model_type: vinn
+save_state_variables: true
 save_nbhrs: false
 action_space: 7
+
+# Clip params
+language_conditioning: true
+query: Open the door
+max_dataset_num: 20
 
 
 #########======== Config for running BC ========##########

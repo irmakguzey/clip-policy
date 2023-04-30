@@ -12,7 +12,7 @@ def main(cfg):
     
     if cfg['model_type'] == 'vinn':
         model = hydra.utils.instantiate(cfg.model)()
-        model.k = cfg["k"] # NOTE: There is a way better way to do that
+        model.k = cfg["k"] 
         model.bs = cfg["bs"]
         model.load_state_variables(cfg["model_pth"])
     else:

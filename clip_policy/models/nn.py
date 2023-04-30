@@ -5,8 +5,6 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import pickle as pkl
 
-from .buffer import NearestNeighborBuffer
-
 
 class VINN(nn.Module):
     def __init__(self, encoder, enc_weight_pth=None, cfg=None):
@@ -15,8 +13,7 @@ class VINN(nn.Module):
         self.cfg = cfg
 
         self.k = 5
-        if "action_space" in cfg:
-            self.action_space = cfg["action_space"]
+
         self.set_act_metrics(cfg)
 
         self.representations = None
@@ -28,17 +25,15 @@ class VINN(nn.Module):
         self.encoder.eval()
         self.device = "cpu"
 
-        self.selected_k = cfg["buffer_size"]  # First
-        self.buffer = NearestNeighborBuffer(buffer_size=cfg["buffer_size"])
-
     def set_act_metrics(self, cfg):
         if cfg is not None and "act_metrics" in cfg["dataset"]:
             act_metrics = cfg["dataset"]["act_metrics"]
             self.act_mean = nn.Parameter(act_metrics["mean"].float())
             self.act_std = nn.Parameter(act_metrics["std"].float())
         else:
-            self.act_mean = nn.Parameter(torch.zeros(self.action_space))
-            self.act_std = nn.Parameter(torch.ones(self.action_space))
+            # initialize to 0 and 1
+            self.act_mean = nn.Parameter(torch.zeros(1)).float()
+            self.act_std = nn.Parameter(torch.ones(1)).float()
 
         self.act_mean.requires_grad = False
         self.act_std.requires_grad = False
@@ -53,20 +48,18 @@ class VINN(nn.Module):
 
     def set_dataset(self, dataloader):
         self.bs = dataloader.batch_size
-        for dataset in tqdm(
-            dataloader.dataset.datasets
-        ):  # Traverse through multiple datasets
+        for dataset in tqdm(dataloader.dataset.datasets):
             for i, (image, label) in enumerate(dataset):
                 image = image.to(self.device)
                 label = torch.Tensor(label).to("cpu").detach()
                 pth = dataset.get_img_pths(i)[0]
                 representation = self.encoder(image).to("cpu").detach()
-                if self.representations is None:  # If this is the first batch
+                if self.representations is None:
                     self.representations = representation
                     self.actions = label
                     self.img_pths = [pth]
                     self.imgs = [image.to("cpu").detach().numpy()]
-                else:  # For all the rest batches
+                else:
                     self.representations = torch.cat(
                         (self.representations, representation), 0
                     )
@@ -97,32 +90,16 @@ class VINN(nn.Module):
             dat_rep = self.representations[
                 i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
             ].to(self.device)
+            dat_act = self.actions[
+                i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
+            ].to(self.device)
             batch_rep = self.encoder(batch_images).to(self.device)
             all_distances[
                 :, i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
-            ] = (
-                torch.cdist(batch_rep, dat_rep).to("cpu").detach()
-            )  # Getting the distance and saving it as such here
+            ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach())
 
-        top_k_distances, selected_indices = torch.topk(
-            all_distances, self.selected_k, dim=1, largest=False
-        )
-
-        indices_idx = []
-        while len(indices_idx) < k:
-            indices_idx.append(self.buffer.choose(selected_indices[0]))
-        indices_idx = torch.tensor([indices_idx])
-        # print("indices_idx: {}".format(indices_idx))
-        indices = selected_indices[0][indices_idx]
-        print(
-            "selected_indices: {}, (indices_idx: {}) -> indices: {}".format(
-                selected_indices[0], indices_idx, indices
-            )
-        )
-
+        top_k_distances, indices = torch.topk(all_distances, k, dim=1, largest=False)
         top_k_actions = self.actions[indices].to(self.device)
-        top_k_distances = top_k_distances[0][indices_idx].to(self.device)
-        print("top_k_distances.shape: {}".format(top_k_distances.shape))
         weights = self.dist_scale_func(top_k_distances.to(self.device))
         pred = torch.sum(top_k_actions * weights.unsqueeze(-1), dim=1)
 
@@ -138,7 +115,7 @@ class VINN(nn.Module):
             self.act_mean,
             self.act_std,
             self.img_pths,
-            self.imgs,
+            self.imgs
         ]
         save_var_names = [
             "representations",
@@ -161,10 +138,13 @@ class VINN(nn.Module):
         load_dict = pkl.load(open(load_path, "rb"))
         self.representations = load_dict["representations"]
         self.actions = load_dict["actions"]
-        self.act_mean = load_dict["act_mean"]
-        self.act_std = load_dict["act_std"]
+
         self.img_pths = load_dict["img_pths"]
-        self.imgs = load_dict["imgs"]
+        if "imgs" in load_dict:
+            self.imgs = load_dict["imgs"]
+
+        self.act_mean = nn.Parameter(load_dict["act_mean"].float())
+        self.act_std = nn.Parameter(load_dict["act_std"].float())
 
         self.encoder.load_state_dict(torch.load(load_path[:-4] + ".pth"))
         self.encoder.eval()

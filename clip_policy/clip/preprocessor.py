@@ -54,10 +54,9 @@ class Preprocessor:
         score_thresh_test,
         classes,
         visualize=True,
-        cfg_merge_path="/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
+        # cfg_merge_path="/home/irmak/Workspace/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
         model_weights_path="https://dl.fbaipublicfiles.com/detic/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
-        # cfg_merge_path="/scratch/ar7420/VINN/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
-        # model_weights_path="/scratch/ar7420/VINN/clip-policy/weights/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
+        cfg_merge_path="/home/robot-lab/hello-robot/anant/clip-policy/configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml",
         zeroshot_weight_path="rand",
         one_class_per_proposal=True,
     ):

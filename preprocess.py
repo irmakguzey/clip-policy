@@ -16,6 +16,7 @@ def main(cfg: DictConfig) -> None:
         env_path=cfg.env_path,
         score_thresh_test=cfg.classifier_threshold,
         classes=cfg.classifier_classes,
+        visualize=cfg.visualize
     )
 
     prep.process_env()

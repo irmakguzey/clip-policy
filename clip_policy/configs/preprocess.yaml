@@ -1,5 +1,5 @@
 # env_path: '/scratch/ar7420/VINN/clip-policy/data'
-env_path: '/home/irmak/Workspace/clip-policy/data'
+env_path: '/home/robot-lab/hello-robot/anant/clip-policy/data'
 classifier_threshold: 0.5
 visualize: False
 classifier_classes:

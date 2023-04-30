@@ -1,15 +1,15 @@
-query: "Pick the cup"
+query: "Open Door"
 
 data_path: '/home/robot-lab/hello-robot/anant/clip-policy/data'
-max_dataset_num: 5
-k: 1
+max_dataset_num: 24
+k: 10
 buffer_size: 50
 batch_size: 64
 action_space: 7
 
-save_state_variables: false # If not it will do the training from scratch
+save_state_variables: true # If not it will do the training from scratch
 
-save_img_path: ./robot_images
-save_img: true
+save_img_path: ./robot_images 
+save_img: false
 model_type: vinn
-save_nbhrs: true
+save_nbhrs: false
