@@ -65,8 +65,8 @@ def main(cfg):
     controller = Controller(cfg = dict_cfg)
     
     model = hydra.utils.instantiate(cfg.model)()
-    model.k = cfg["k"]
-    model.bs = cfg["batch_size"]
+    # model.k = cfg["k"]
+    # model.bs = cfg["batch_size"]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if cfg.save_state_variables:

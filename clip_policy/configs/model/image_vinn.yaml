@@ -4,4 +4,8 @@ encoder:
   _target_: clip_policy.models.ImageEncoder
   encoder_type: resnet18
   pretrained: True #False
-enc_weight_pth: /home/robot-lab/hello-robot/anant/clip-policy/weights/byol_nlu_135.pth
+enc_weight_pth: /home/robot-lab/hello-robot/anant/clip-policy/weights/byol_nlu4_150.pth
+k: ${k}
+bs: ${batch_size}
+use_buffer: ${use_buffer}
+buffer_k: ${buffer_k}

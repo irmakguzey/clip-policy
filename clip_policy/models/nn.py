@@ -5,14 +5,16 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import pickle as pkl
 
+from .buffer import NearestNeighborBuffer
 
 class VINN(nn.Module):
-    def __init__(self, encoder, enc_weight_pth=None, cfg=None):
+    def __init__(self, encoder, k, bs, enc_weight_pth=None, cfg=None, use_buffer=False, buffer_k=None):
         super(VINN, self).__init__()
         self.encoder = encoder
         self.cfg = cfg
 
-        self.k = 5
+        self.k = k 
+        self.bs = bs
 
         self.set_act_metrics(cfg)
 
@@ -24,6 +26,13 @@ class VINN(nn.Module):
         self.dist_scale_func = lambda x: (softmax(-x))
         self.encoder.eval()
         self.device = "cpu"
+
+        self.buffer_k = buffer_k
+        self.use_buffer = use_buffer
+        if use_buffer:
+            self.buffer = NearestNeighborBuffer(
+                buffer_size = 12  # Only after 5 timesteps same neighbor could be chosen
+            )
 
     def set_act_metrics(self, cfg):
         if cfg is not None and "act_metrics" in cfg["dataset"]:
@@ -98,7 +107,35 @@ class VINN(nn.Module):
                 :, i * self.bs : min((i + 1) * self.bs, self.representations.shape[0])
             ] = (torch.cdist(batch_rep, dat_rep).to("cpu").detach())
 
-        top_k_distances, indices = torch.topk(all_distances, k, dim=1, largest=False)
+        if self.use_buffer:
+            # pass 
+            top_k_buffer_distances, buffer_indices = torch.topk(all_distances, self.buffer_k, dim=1, largest=False)
+            # print('top_k_buffer_distances.shape: {}, buffer_indices.shape: {}'.format(
+            #     top_k_buffer_distances.shape, buffer_indices.shape
+            # ))
+            # indices = torch.zeros((1,k)).long()
+            # top_k_distances = torch.zeros((1,k)).long()
+            # for i in range(k):
+            #     unique_id = self.buffer.choose(buffer_indices[0]) # Each chosen id will be added to the queue 
+            #     print(f'unique_id: {unique_id}')
+            #     indices[0,i] = buffer_indices[0,unique_id]
+            #     top_k_distances[0,i] = top_k_buffer_distances[0,unique_id]
+
+            indices_idx = []
+            while len(indices_idx) < k:
+                indices_idx.append(self.buffer.choose(buffer_indices[0]))
+            indices_idx = torch.tensor([indices_idx])
+            indices = buffer_indices[0][indices_idx]
+            top_k_distances = top_k_buffer_distances[0][indices_idx].to(self.device)
+            # print('new top_k_distances.shape: {}'.format(
+            #     top_k_distances.shape
+            # ))
+
+        else:
+            top_k_distances, indices = torch.topk(all_distances, k, dim=1, largest=False)
+        
+
+        print(f'indices: {indices}')
         top_k_actions = self.actions[indices].to(self.device)
         weights = self.dist_scale_func(top_k_distances.to(self.device))
         pred = torch.sum(top_k_actions * weights.unsqueeze(-1), dim=1)

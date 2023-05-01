@@ -122,7 +122,7 @@ class Controller:
             h = input("Enter height:")
 
             self.publisher.publish(
-                "home_params_publisher", [float(h), 0.02, 0.0, 0.0, 0.09, 0.03, 1.0]
+                "home_params_publisher", [float(h), 0.02, 0.0, 0.0, 0.14, 0.03, 1.0]
             )
             self.run_for -= 1
             return None
@@ -132,7 +132,7 @@ class Controller:
             base, h = self.schedule_init(int(sched_no))
             print(h, base)
             self.publisher.publish(
-                "home_params_publisher", [h, 0.02, base, 0.0, 0.09, 0.03, 1.0]
+                "home_params_publisher", [h, 0.02, base, 0.0, 0.14, 0.03, 1.0]
             )
 
             self.run_for -= 1
